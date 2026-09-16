@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Trovx — Wordmark Opções</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #F7F7F4; --ink: #0F0F12; --muted: #6B6B70; --amber: #F5A524; --border: #E8E8E2; }
+* { box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 56px 32px; color: var(--ink); }
+.container { max-width: 1080px; margin: 0 auto; }
+h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 36px; margin: 0 0 8px; letter-spacing: -0.02em; }
+.lead { color: var(--muted); font-size: 15px; margin-bottom: 48px; max-width: 640px; }
+.option { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 56px 48px; margin-bottom: 24px; position: relative; }
+.tag { position: absolute; top: 16px; left: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 8px; background: var(--bg); border-radius: 4px; }
+.title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px; margin: 24px 0 8px; }
+.desc { color: var(--muted); font-size: 14px; max-width: 560px; line-height: 1.5; }
+.pros { margin-top: 12px; font-size: 13px; color: var(--ink); }
+.pros span { display: inline-block; padding: 2px 8px; background: #ECFDF5; color: #047857; border-radius: 4px; margin-right: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.dark { background: var(--ink); }
+.dark .title, .dark .desc { color: #fff; }
+.dark .desc { color: #A8A8AD; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Wordmark Trovx — 3 opções para resolver a distância</h1>
+  <p class="lead">Todas as três opções mantêm o glifo customizado âmbar/preto. O que muda é o grau de integração com o "trov".</p>
+
+  <!-- OPÇÃO A -->
+  <div class="option">
+    <div class="tag">OPÇÃO A — MÍNIMO INVASIVO</div>
+    <svg viewBox="0 0 280 80" width="280">
+      <text x="20" y="56" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#0F0F12">trov</text>
+      <g transform="translate(190, 12)">
+        <line x1="0" y1="60" x2="34.6" y2="0" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+        <line x1="0" y1="0" x2="34.6" y2="60" stroke="#0F0F12" stroke-width="7" stroke-linecap="square"/>
+      </g>
+    </svg>
+    <div class="title">Glifo colado no "v", sem sobreposição</div>
+    <div class="desc">Mover o glifo "x" 10px para trás, encostando na borda direita do "v". Mantém a integridade das duas peças mas elimina o gap visível.</div>
+    <div class="pros"><span>BAIXO RISCO</span><span>RÁPIDO</span><span>PRESERVA TUDO</span></div>
+  </div>
+
+  <!-- OPÇÃO B -->
+  <div class="option">
+    <div class="tag">OPÇÃO B — KERNING AGRESSIVO + COLAGEM</div>
+    <svg viewBox="0 0 280 80" width="280">
+      <text x="20" y="56" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-5" fill="#0F0F12">trov</text>
+      <g transform="translate(180, 12)">
+        <line x1="0" y1="60" x2="34.6" y2="0" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+        <line x1="0" y1="0" x2="34.6" y2="60" stroke="#0F0F12" stroke-width="7" stroke-linecap="square"/>
+      </g>
+    </svg>
+    <div class="title">"trov" mais apertado, "x" mais próximo</div>
+    <div class="desc">Letter-spacing de -5px (vs -3.8 atual) + glifo colado em x=180. Cria unidade tipográfica mais densa sem invadir.</div>
+    <div class="pros"><span>MAIS COMPACTO</span><span>VISUALMENTE PESADO</span><span>LEITURA FORTE</span></div>
+  </div>
+
+  <!-- OPÇÃO C -->
+  <div class="option">
+    <div class="tag">OPÇÃO C — SOBREPOSIÇÃO (x invade o v)</div>
+    <svg viewBox="0 0 290 80" width="290">
+      <text x="20" y="56" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#0F0F12">trov</text>
+      <g transform="translate(170, 12)">
+        <line x1="0" y1="60" x2="34.6" y2="0" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+        <line x1="0" y1="0" x2="34.6" y2="60" stroke="#0F0F12" stroke-width="7" stroke-linecap="square"/>
+      </g>
+    </svg>
+    <div class="title">"x" sobrepõe o "v" em 30%</div>
+    <div class="desc">A haste SW preta do "x" cruza por trás da haste direita do "v". Vira um gesto único — o "x" abraça o "v". Resolve distância por definição.</div>
+    <div class="pros"><span>GESTO ÚNICO</span><span>MEMORÁVEL</span><span>RADICAL</span></div>
+  </div>
+
+  <!-- DARK MODE -->
+  <div class="option dark">
+    <div class="tag" style="background: rgba(255,255,255,0.1); color: #A8A8AD">OPÇÃO B EM DARK MODE</div>
+    <svg viewBox="0 0 280 80" width="280">
+      <text x="20" y="56" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-5" fill="#FFFFFF">trov</text>
+      <g transform="translate(180, 12)">
+        <line x1="0" y1="60" x2="34.6" y2="0" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+        <line x1="0" y1="0" x2="34.6" y2="60" stroke="#0F0F12" stroke-width="7" stroke-linecap="square"/>
+      </g>
+    </svg>
+    <div class="title">Mesma opção B, em fundo escuro</div>
+    <div class="desc">Para validar como o gesto se comporta no dark mode antes de cravar.</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { font-family: 'Inter', sans-serif; background: #0F0F12; padding: 40px; color: #A8A8AD; margin: 0; }
+.row { background: #1A1A1F; padding: 48px; margin-bottom: 12px; border-radius: 12px; }
+.row.light { background: white; color: #0F0F12; }
+.label { font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-bottom: 28px; text-transform: uppercase; letter-spacing: 0.08em; }
+.row:not(.light) .label { color: #6B6B70; }
+.amber-stripe { background: #F5A524; color: #0F0F12; }
+h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; margin: 0 0 24px; text-transform: uppercase; letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+
+<div class="row light">
+  <h2>Sua referência</h2>
+  <svg viewBox="0 0 290 100" width="290" height="100">
+    <text x="20" y="68" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#0F0F12" opacity="0.25">tro</text>
+    <line x1="35" y1="22" x2="200" y2="68" stroke="#0F0F12" stroke-width="8" stroke-linecap="square" opacity="0.25"/>
+    <path d="M 225 22 L 200 68 L 225 22 L 255 -12" stroke="#0F0F12" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter" fill="none" opacity="0.25"/>
+    <line x1="215" y1="-12" x2="248" y2="40" stroke="#F5A524" stroke-width="8" stroke-linecap="square"/>
+  </svg>
+  <div class="label" style="color: #6B6B70">Replica visual da imagem enviada</div>
+</div>
+
+<div class="row light">
+  <h2>v5 — Implementação atual</h2>
+  <svg viewBox="0 0 290 100" width="290" height="100">
+    <text x="20" y="68" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#0F0F12">tro</text>
+    <line x1="175" y1="22" x2="200" y2="68" stroke="#0F0F12" stroke-width="7" stroke-linecap="square"/>
+    <path d="M 225 22 L 200 68 L 225 22 L 252 -12" stroke="#0F0F12" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <line x1="218" y1="-12" x2="244" y2="36" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+  </svg>
+  <div class="label" style="color: #6B6B70">logo.svg atual — pronto para usar</div>
+</div>
+
+<div class="row">
+  <h2>v5 dark</h2>
+  <svg viewBox="0 0 290 100" width="290" height="100">
+    <text x="20" y="68" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#FFFFFF">tro</text>
+    <line x1="175" y1="22" x2="200" y2="68" stroke="#FFFFFF" stroke-width="7" stroke-linecap="square"/>
+    <path d="M 225 22 L 200 68 L 225 22 L 252 -12" stroke="#FFFFFF" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <line x1="218" y1="-12" x2="244" y2="36" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+  </svg>
+  <div class="label">dark mode — tro em branco, hastes em branco, âmbar mantido</div>
+</div>
+
+<div class="row amber-stripe">
+  <h2>v5 on amber</h2>
+  <svg viewBox="0 0 290 100" width="290" height="100">
+    <text x="20" y="68" font-family="Space Grotesk" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#0F0F12">tro</text>
+    <line x1="175" y1="22" x2="200" y2="68" stroke="#0F0F12" stroke-width="7" stroke-linecap="square"/>
+    <path d="M 225 22 L 200 68 L 225 22 L 252 -12" stroke="#0F0F12" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <line x1="218" y1="-12" x2="244" y2="36" stroke="#FFFFFF" stroke-width="7" stroke-linecap="square"/>
+  </svg>
+  <div class="label">fundo âmbar — hastes pretas, diagonal em branco</div>
+</div>
+
+</body>
+</html>
