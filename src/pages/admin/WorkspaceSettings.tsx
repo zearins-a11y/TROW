@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Building2, Plus, Users, FolderKanban, Loader2 } from 'lucide-react'
+import { motion } from 'motion/react'
+import { Building2, Plus, FolderKanban, Loader2 } from 'lucide-react'
 import { Button, Input, Modal, Badge } from '../../components/ui'
+import { AdminLayout } from '../../components/AdminLayout'
 import { usePermissions } from '../../contexts/PermissionsContext'
 import { supabase, isSupabaseConfigured } from '../../lib/supabase'
 import { auth } from '../../lib/auth'
@@ -159,22 +160,18 @@ export default function WorkspaceSettings() {
 
   if (permissionsLoading || loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-      </div>
+      <AdminLayout title="Configurações" subtitle="Gerencie workspaces e projetos">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+        </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Configurações</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Gerencie workspaces e projetos
-          </p>
-        </div>
+    <AdminLayout title="Configurações" subtitle="Gerencie workspaces e projetos">
+      {/* Header with create button */}
+      <div className="flex items-center justify-end mb-6">
         {isSuperAdmin && (
           <Button onClick={() => setShowCreateWorkspace(true)} icon={<Plus size={18} />}>
             Novo Workspace
@@ -287,7 +284,7 @@ export default function WorkspaceSettings() {
           className="mt-8"
         >
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <Users className="w-5 h-5" />
+            <Building2 className="w-5 h-5" />
             Meus Workspaces
           </h2>
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -402,6 +399,6 @@ export default function WorkspaceSettings() {
           </div>
         </div>
       </Modal>
-    </div>
+    </AdminLayout>
   )
 }

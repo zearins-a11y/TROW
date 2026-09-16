@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Check, Clock, AlertCircle } from 'lucide-react';
 import { FlowStage } from '../../types/governance';
 

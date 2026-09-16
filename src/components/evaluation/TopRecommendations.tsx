@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Trophy, ArrowRight } from 'lucide-react';
 import { useEvaluationStore } from '../../stores/useEvaluationStore';
 import {

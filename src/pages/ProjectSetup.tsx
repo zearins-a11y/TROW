@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { X, Sparkles, CheckCircle, ArrowRight } from 'lucide-react';
 import { Button, Modal } from '../components/ui';
 import { SquadSelector } from '../components/projects/SquadSelector';

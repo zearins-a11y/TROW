@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Shield, AlertTriangle, Info } from 'lucide-react';
 import { StrikePanel } from '../components/governance/StrikePanel';
 

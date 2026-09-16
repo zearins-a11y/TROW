@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { Shield, Save, Loader2, Check } from 'lucide-react'
 import { Button, Badge } from '../../components/ui'
+import { AdminLayout } from '../../components/AdminLayout'
 import { usePermissions } from '../../contexts/PermissionsContext'
 import { supabase, isSupabaseConfigured } from '../../lib/supabase'
+import { logAudit } from '../../lib/audit'
 
 interface Role {
   id: string
@@ -118,12 +120,12 @@ export default function RoleEditor() {
   async function handleSave() {
     if (!isSupabaseConfigured || !supabase || !selectedRole) return
 
+    const previousPermissions = Object.fromEntries(
+      (selectedRole.permissions || []).map((p: RolePermission) => [p.module_name, p])
+    )
+
     setSaving(true)
     try {
-      // Delete existing permissions
-      await supabase.from('role_permissions').delete().eq('role_id', selectedRole.id)
-
-      // Insert new permissions
       const permissionsToInsert = Object.values(editedPermissions).map((p) => ({
         role_id: selectedRole.id,
         module_name: p.module_name,
@@ -134,9 +136,20 @@ export default function RoleEditor() {
         can_approve: p.can_approve,
       }))
 
-      if (permissionsToInsert.length > 0) {
-        await supabase.from('role_permissions').insert(permissionsToInsert)
-      }
+      const { error: upsertError } = await supabase
+        .from('role_permissions')
+        .upsert(permissionsToInsert, { onConflict: 'role_id,module_name' })
+
+      if (upsertError) throw upsertError
+
+      await logAudit({
+        action: 'update',
+        module: 'permissions',
+        resourceType: 'role',
+        resourceId: selectedRole.id,
+        oldValue: previousPermissions,
+        newValue: Object.fromEntries(permissionsToInsert.map((p) => [p.module_name, p])),
+      })
 
       setSaved(true)
       loadRoles()
@@ -149,45 +162,42 @@ export default function RoleEditor() {
 
   if (permissionsLoading || loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-      </div>
+      <AdminLayout title="Editor de Papéis" subtitle="Configure permissões por papel e módulo">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+        </div>
+      </AdminLayout>
     )
   }
 
   if (!isAdmin) {
     return (
-      <div className="p-6">
+      <AdminLayout title="Editor de Papéis">
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
           <p className="text-yellow-800 dark:text-yellow-200">
             Você precisa ser administrador para editar permissões de papéis.
           </p>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Editor de Papéis</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Configure permissões por papel e módulo
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {saved && (
-            <Badge variant="success" className="flex items-center gap-1">
-              <Check className="w-3 h-3" />
-              Salvo
-            </Badge>
-          )}
-          <Button onClick={handleSave} disabled={saving} icon={<Save size={18} />}>
-            {saving ? 'Salvando...' : 'Salvar Alterações'}
-          </Button>
-        </div>
+    <AdminLayout
+      title="Editor de Papéis"
+      subtitle="Configure permissões por papel e módulo"
+    >
+      {/* Header with save */}
+      <div className="flex items-center justify-end gap-3 mb-6">
+        {saved && (
+          <Badge variant="success" className="flex items-center gap-1">
+            <Check className="w-3 h-3" />
+            Salvo
+          </Badge>
+        )}
+        <Button onClick={handleSave} disabled={saving} icon={<Save size={18} />}>
+          {saving ? 'Salvando...' : 'Salvar Alterações'}
+        </Button>
       </div>
 
       <div className="grid grid-cols-12 gap-6">
@@ -325,6 +335,6 @@ export default function RoleEditor() {
           </div>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   )
 }

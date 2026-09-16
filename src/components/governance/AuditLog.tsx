@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Clock, Check, AlertTriangle, X, FileText, Send } from 'lucide-react';
 import { AuditLogEntry } from '../../types/governance';
 

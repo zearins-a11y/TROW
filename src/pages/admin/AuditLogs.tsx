@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { Clock, User, Activity, Filter, ChevronDown, ChevronUp } from 'lucide-react'
 import { Badge } from '../../components/ui'
+import { AdminLayout } from '../../components/AdminLayout'
 import { usePermissions } from '../../contexts/PermissionsContext'
 import { getAuditLogs, AuditLog, formatAction, getActionColor, AuditFilters, AuditAction } from '../../lib/audit'
 
@@ -38,24 +39,22 @@ export default function AuditLogs() {
   const isGestor = checkGestor()
 
   useEffect(() => {
-    if (permissions?.teamId && isGestor) {
-      loadLogs()
-    } else {
+    if (permissionsLoading) return
+    if (!isGestor) {
       setLoading(false)
+      return
     }
-  }, [permissions?.teamId, isGestor, filters])
+    loadLogs()
+  }, [permissionsLoading, isGestor, filters])
 
   async function loadLogs() {
     setLoading(true)
     try {
-      const filtersWithTeam: AuditFilters = {
-        ...filters,
-        teamId: permissions?.teamId || undefined,
-      }
-      const data = await getAuditLogs(filtersWithTeam)
+      const data = await getAuditLogs(filters)
+      console.log('[AuditLogs] loaded', data.length, 'logs with filters', filters, 'permissions:', { role: permissions?.role, workspaceId: permissions?.workspaceId })
       setLogs(data)
     } catch (error) {
-      console.error('Failed to load audit logs:', error)
+      console.error('[AuditLogs] failed:', error)
     } finally {
       setLoading(false)
     }
@@ -89,26 +88,31 @@ export default function AuditLogs() {
 
   if (permissionsLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
-      </div>
+      <AdminLayout title="Logs de Auditoria" subtitle="Histórico de ações do sistema">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+        </div>
+      </AdminLayout>
     )
   }
 
   if (!isGestor) {
     return (
-      <div className="p-6">
+      <AdminLayout title="Logs de Auditoria">
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
           <p className="text-yellow-800 dark:text-yellow-200">
             Você precisa ser gestor ou superior para ver os logs de auditoria.
           </p>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="p-6">
+    <AdminLayout
+      title="Logs de Auditoria"
+      subtitle="Histórico de ações do sistema"
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -230,7 +234,7 @@ export default function AuditLogs() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Badge variant="gray" className="capitalize">
-                      {log.module_name}
+                      {log.module}
                     </Badge>
                     <span className="text-xs text-gray-400 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
@@ -245,7 +249,7 @@ export default function AuditLogs() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-gray-500 dark:text-gray-400">Módulo:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white capitalize">{log.module_name}</span>
+                      <span className="ml-2 text-gray-900 dark:text-white capitalize">{log.module}</span>
                     </div>
                     <div>
                       <span className="text-gray-500 dark:text-gray-400">Tipo:</span>
@@ -287,6 +291,6 @@ export default function AuditLogs() {
           ))
         )}
       </div>
-    </div>
+    </AdminLayout>
   )
 }

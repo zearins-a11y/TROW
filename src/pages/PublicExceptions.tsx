@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { AlertTriangle, Info, Shield, CheckCircle2, Clock, Eye } from 'lucide-react';
 import { PublicExceptionsPanel } from '../components/governance/PublicExceptionsPanel';
 

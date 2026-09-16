@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { Users, Plus, Trash2, Shield, Mail, MoreVertical } from 'lucide-react'
 import { Button, Input, Modal, Badge } from '../../components/ui'
+import { AdminLayout } from '../../components/AdminLayout'
+import { InviteModal } from '../../components/InviteModal'
 import { usePermissions } from '../../contexts/PermissionsContext'
 import { supabase, isSupabaseConfigured } from '../../lib/supabase'
-import { auth } from '../../lib/auth'
 
 interface Team {
   id: string
@@ -23,45 +24,54 @@ interface TeamMember {
   role_id: string
 }
 
-interface Role {
-  id: string
-  name: string
-  description: string
-}
-
 export default function TeamManagement() {
   const { permissions, loading: permissionsLoading, checkGestor } = usePermissions()
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
   const [members, setMembers] = useState<TeamMember[]>([])
-  const [roles, setRoles] = useState<Role[]>([])
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [newTeamName, setNewTeamName] = useState('')
   const [newTeamDesc, setNewTeamDesc] = useState('')
-  const [inviteEmail, setInviteEmail] = useState('')
-  const [inviteRole, setInviteRole] = useState('')
   const [saving, setSaving] = useState(false)
 
   const isGestor = checkGestor()
 
-  // Load teams
+  // Load all teams the user can see (filtered by workspace for non-admins, all for super_admin)
   useEffect(() => {
-    if (!isSupabaseConfigured || !permissions?.teamId) return
+    if (!isSupabaseConfigured || !permissions?.workspaceId) return
     loadTeams()
-    loadRoles()
-  }, [permissions?.teamId])
+  }, [permissions?.workspaceId, permissions?.projectId])
 
   async function loadTeams() {
-    if (!isSupabaseConfigured || !supabase || !permissions?.projectId) return
+    if (!isSupabaseConfigured || !supabase) return
 
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('teams')
-        .select('*')
-        .eq('project_id', permissions.projectId)
+      // For super_admin (no project_id), fetch teams across all projects in workspace
+      // For regular users, filter by their project_id
+      let query = supabase.from('teams').select('*')
+
+      if (permissions?.projectId) {
+        query = query.eq('project_id', permissions.projectId)
+      } else if (permissions?.workspaceId) {
+        // Get projects in workspace first, then filter teams by those project_ids
+        const { data: projects } = await supabase
+          .from('projects')
+          .select('id')
+          .eq('workspace_id', permissions.workspaceId)
+
+        const projectIds = projects?.map((p) => p.id) || []
+        if (projectIds.length === 0) {
+          setTeams([])
+          setLoading(false)
+          return
+        }
+        query = query.in('project_id', projectIds)
+      }
+
+      const { data, error } = await query
 
       if (!error && data) {
         // Get member counts for each team
@@ -76,23 +86,13 @@ export default function TeamManagement() {
           })
         )
         setTeams(teamsWithCounts)
+      } else {
+        console.error('[TeamManagement] loadTeams error:', error)
       }
     } catch (error) {
-      console.error('Failed to load teams:', error)
+      console.error('[TeamManagement] loadTeams failed:', error)
     } finally {
       setLoading(false)
-    }
-  }
-
-  async function loadRoles() {
-    if (!isSupabaseConfigured || !supabase) return
-
-    const { data } = await supabase.from('roles').select('*').eq('is_system', true)
-    if (data) {
-      setRoles(data)
-      if (data.length > 0) {
-        setInviteRole(data[0].id)
-      }
     }
   }
 
@@ -152,35 +152,6 @@ export default function TeamManagement() {
     }
   }
 
-  async function handleInviteMember() {
-    if (!isSupabaseConfigured || !supabase || !selectedTeam || !inviteEmail.trim() || !inviteRole) return
-
-    setSaving(true)
-    try {
-      // Generate invite token
-      const token = crypto.randomUUID()
-
-      const { error } = await supabase.from('invitations').insert({
-        team_id: selectedTeam.id,
-        email: inviteEmail.trim(),
-        role_id: inviteRole,
-        invited_by: (await auth.getUser())?.id,
-        token,
-      })
-
-      if (!error) {
-        setShowInviteModal(false)
-        setInviteEmail('')
-        // In a real app, send email with invite link
-        alert(`Convite criado! Compartilhe o link com ${inviteEmail}`)
-      }
-    } catch (error) {
-      console.error('Failed to invite member:', error)
-    } finally {
-      setSaving(false)
-    }
-  }
-
   async function handleRemoveMember(memberId: string) {
     if (!isSupabaseConfigured || !supabase) return
 
@@ -193,34 +164,33 @@ export default function TeamManagement() {
 
   if (permissionsLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
-      </div>
+      <AdminLayout title="Gerenciar Equipes" subtitle="Crie equipes e convide membros para colaborar">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+        </div>
+      </AdminLayout>
     )
   }
 
   if (!isGestor) {
     return (
-      <div className="p-6">
+      <AdminLayout title="Gerenciar Equipes">
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
           <p className="text-yellow-800 dark:text-yellow-200">
             Você precisa ser gestor ou superior para gerenciar equipes.
           </p>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="p-6">
+    <AdminLayout
+      title="Gerenciar Equipes"
+      subtitle="Crie equipes e convide membros para colaborar"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Gerenciar Equipes</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Crie equipes e convide membros para colaborar
-          </p>
-        </div>
+      <div className="flex items-center justify-end mb-6">
         <Button onClick={() => setShowCreateTeam(true)} icon={<Plus size={18} />}>
           Nova Equipe
         </Button>
@@ -376,53 +346,16 @@ export default function TeamManagement() {
         </div>
       </Modal>
 
-      {/* Invite Modal */}
-      <Modal
-        isOpen={showInviteModal}
+      {/* Invite Modal - improved UX */}
+      <InviteModal
+        open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
-        title={`Convidar Membro para ${selectedTeam?.name}`}
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Email
-            </label>
-            <Input
-              type="email"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              placeholder="email@exemplo.com"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Papel
-            </label>
-            <select
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
-            >
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name} - {role.description}
-                </option>
-              ))}
-            </select>
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            O convite será enviado por email e expirará em 7 dias.
-          </p>
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="ghost" onClick={() => setShowInviteModal(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleInviteMember} disabled={saving || !inviteEmail.trim()}>
-              {saving ? 'Enviando...' : 'Enviar Convite'}
-            </Button>
-          </div>
-        </div>
-      </Modal>
-    </div>
+        teamId={selectedTeam?.id || ''}
+        teamName={selectedTeam?.name || ''}
+        onSent={() => {
+          // refresh stats if needed
+        }}
+      />
+    </AdminLayout>
   )
 }

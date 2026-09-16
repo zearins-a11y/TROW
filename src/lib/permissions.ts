@@ -61,32 +61,21 @@ async function doFetchPermissions(userId: string): Promise<UserPermissions> {
   }
 
   try {
-    // Get user's team membership with role
+    // Get user's team membership
     const { data: membership, error: membershipError } = await supabase
       .from('team_members')
-      .select(`
-        team_id,
-        role_id,
-        teams:team_id (
-          project_id,
-          projects:project_id (
-            workspace_id
-          )
-        ),
-        roles:role_id (
-          name
-        )
-      `)
+      .select('team_id, role_id')
       .eq('user_id', userId)
       .single()
 
     if (membershipError || !membership) {
-      // Check if user owns a workspace
+      // Check if user owns a workspace (super_admin shortcut)
       const { data: workspace } = await supabase
         .from('workspaces')
         .select('id')
         .eq('owner_id', userId)
-        .single()
+        .limit(1)
+        .maybeSingle()
 
       if (workspace) {
         cachedPermissions = {
@@ -102,13 +91,35 @@ async function doFetchPermissions(userId: string): Promise<UserPermissions> {
       return getDefaultPermissions()
     }
 
-    const teams = membership.teams as any
-    const projects = teams?.projects as any
-    const workspaceId = projects?.workspace_id || null
-    const projectId = teams?.project_id || null
+    // Fetch team separately
+    const { data: team } = await supabase
+      .from('teams')
+      .select('project_id')
+      .eq('id', membership.team_id)
+      .maybeSingle()
+
+    const projectId = team?.project_id || null
+
+    // Fetch project separately to get workspace_id
+    let workspaceId: string | null = null
+    if (projectId) {
+      const { data: project } = await supabase
+        .from('projects')
+        .select('workspace_id')
+        .eq('id', projectId)
+        .maybeSingle()
+      workspaceId = project?.workspace_id || null
+    }
+
+    // Fetch role
+    const { data: roleData } = await supabase
+      .from('roles')
+      .select('name')
+      .eq('id', membership.role_id)
+      .maybeSingle()
+
+    const roleName = roleData?.name || 'viewer'
     const teamId = membership.team_id
-    const roles = membership.roles as any
-    const roleName = roles?.name || 'viewer'
 
     // Get role permissions for all modules
     const { data: rolePermissions } = await supabase

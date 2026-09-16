@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { RefreshCw, Info, TrendingUp, CheckCircle2, Edit3, XCircle, BarChart3 } from 'lucide-react';
 import { FeedbackLoopPanel } from '../components/governance/FeedbackLoopPanel';
 
