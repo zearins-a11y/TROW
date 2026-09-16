@@ -11,9 +11,8 @@ export interface AuditLog {
   user_id: string
   user_name?: string
   user_email?: string
-  team_id: string | null
   action: AuditAction
-  module_name: string
+  module: string
   resource_type: string
   resource_id: string | null
   old_value: Record<string, any> | null
@@ -36,7 +35,6 @@ export interface AuditFilters {
   module?: string
   action?: AuditAction
   userId?: string
-  teamId?: string
   resourceType?: string
   resourceId?: string
   startDate?: Date
@@ -53,7 +51,7 @@ export async function logAudit(params: CreateAuditLogParams): Promise<void> {
   }
 
   try {
-    await supabase.rpc('create_audit_log', {
+    const { error } = await supabase.rpc('create_audit_log', {
       p_action: params.action,
       p_module: params.module,
       p_resource_type: params.resourceType,
@@ -61,8 +59,16 @@ export async function logAudit(params: CreateAuditLogParams): Promise<void> {
       p_old_value: params.oldValue || null,
       p_new_value: params.newValue || null,
     })
-  } catch (error) {
-    console.error('Failed to create audit log:', error)
+
+    if (error) {
+      throw error
+    }
+  } catch (error: any) {
+    // Always log to console; in dev we also log the structured payload for debugging
+    console.error('[Audit] failed to create audit log:', error?.message || error)
+    if (import.meta.env.DEV) {
+      console.error('[Audit] payload:', params)
+    }
   }
 }
 
@@ -83,7 +89,7 @@ export async function getAuditLogs(filters: AuditFilters = {}): Promise<AuditLog
     .order('created_at', { ascending: false })
 
   if (filters.module) {
-    query = query.eq('module_name', filters.module)
+    query = query.eq('module', filters.module)
   }
 
   if (filters.action) {
@@ -92,10 +98,6 @@ export async function getAuditLogs(filters: AuditFilters = {}): Promise<AuditLog
 
   if (filters.userId) {
     query = query.eq('user_id', filters.userId)
-  }
-
-  if (filters.teamId) {
-    query = query.eq('team_id', filters.teamId)
   }
 
   if (filters.resourceType) {
@@ -183,7 +185,7 @@ export async function getActionCounts(
 
   let query = supabase
     .from('audit_logs')
-    .select('module_name')
+    .select('module')
 
   if (startDate) {
     query = query.gte('created_at', startDate.toISOString())
@@ -202,7 +204,7 @@ export async function getActionCounts(
 
   const counts: Record<string, number> = {}
   data?.forEach((log) => {
-    counts[log.module_name] = (counts[log.module_name] || 0) + 1
+    counts[log.module] = (counts[log.module] || 0) + 1
   })
 
   return counts

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { ClipboardCheck, BookOpen, AlertCircle } from 'lucide-react';
 import { EvaluationPanel } from '../components/evaluation/EvaluationPanel';
 import { SourceComparisonChart } from '../components/evaluation/SourceComparisonChart';

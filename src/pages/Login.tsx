@@ -1,17 +1,22 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function Login() {
-  const navigate = useNavigate()
-  const { signIn, signInWithGoogle, signInWithGitHub, loading } = useAuth()
+  const { signIn, signInWithGoogle, signInWithGitHub, user } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  // If user is already logged in, redirect to dashboard
+  if (user) {
+    window.location.hash = 'dashboard'
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,17 +27,21 @@ export default function Login() {
       return
     }
 
+    setSubmitting(true)
     const { error } = await signIn(email, password)
+    setSubmitting(false)
     if (error) {
       setError(error)
     } else {
-      navigate('/dashboard')
+      window.location.hash = 'dashboard'
     }
   }
 
   const handleGoogleLogin = async () => {
     setError('')
+    setSubmitting(true)
     const { error } = await signInWithGoogle()
+    setSubmitting(false)
     if (error) {
       setError(error)
     }
@@ -40,7 +49,9 @@ export default function Login() {
 
   const handleGitHubLogin = async () => {
     setError('')
+    setSubmitting(true)
     const { error } = await signInWithGitHub()
+    setSubmitting(false)
     if (error) {
       setError(error)
     }
@@ -85,7 +96,7 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="seu@email.com"
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
-                  disabled={loading}
+                  disabled={submitting}
                 />
               </div>
             </div>
@@ -102,7 +113,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
-                  disabled={loading}
+                  disabled={submitting}
                 />
                 <button
                   type="button"
@@ -116,10 +127,10 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               Entrar
             </button>
           </form>
@@ -138,7 +149,7 @@ export default function Login() {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={handleGoogleLogin}
-              disabled={loading}
+              disabled={submitting}
               className="flex items-center justify-center gap-2 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -152,7 +163,7 @@ export default function Login() {
 
             <button
               onClick={handleGitHubLogin}
-              disabled={loading}
+              disabled={submitting}
               className="flex items-center justify-center gap-2 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -165,9 +176,16 @@ export default function Login() {
           {/* Footer */}
           <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
             Não tem uma conta?{' '}
-            <Link to="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+            <a
+              href="#signup"
+              className="text-blue-600 hover:text-blue-700 font-medium"
+              onClick={(e) => {
+                e.preventDefault()
+                window.location.hash = 'signup'
+              }}
+            >
               Criar conta
-            </Link>
+            </a>
           </p>
         </div>
       </motion.div>

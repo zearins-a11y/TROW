@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { BrainCircuit, Info, TrendingUp, CheckCircle2, User, XCircle } from 'lucide-react';
 import { ThresholdConfigPanel } from '../components/governance/ThresholdConfigPanel';
 

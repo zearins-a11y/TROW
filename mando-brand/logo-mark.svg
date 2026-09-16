@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Hexágono de comando isolado, ideal para favicon e app icon -->
+  <polygon points="32,4 58,19 58,45 32,60 6,45 6,19"
+           fill="#3D3F8F"
+           stroke="#3D3F8F"
+           stroke-width="2"
+           stroke-linejoin="round"/>
+
+  <polygon points="32,12 52,23 52,41 32,52 12,41 12,23"
+           fill="none"
+           stroke="#FFFFFF"
+           stroke-width="1"
+           stroke-opacity="0.3"
+           stroke-linejoin="round"/>
+
+  <!-- 3 agentes -->
+  <circle cx="32" cy="16" r="3" fill="#00D4C4"/>
+  <circle cx="48" cy="40" r="3" fill="#FF5A36"/>
+  <circle cx="16" cy="40" r="3" fill="#FFFFFF"/>
+
+  <!-- Pulso central -->
+  <circle cx="32" cy="32" r="4" fill="#FF5A36"/>
+  <circle cx="32" cy="32" r="7" fill="none" stroke="#FF5A36" stroke-width="1.5" stroke-opacity="0.5"/>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <!-- Hexágono de comando com pulso coral + 3 agentes orbitando -->
+  <g transform="translate(8, 12)">
+    <!-- Hexágono principal (filled) -->
+    <polygon points="28,2 50,15 50,41 28,54 6,41 6,15"
+             fill="#3D3F8F"
+             stroke="#3D3F8F"
+             stroke-width="2"
+             stroke-linejoin="round"/>
+
+    <!-- Hexágono interno (outline) - camadas concêntricas -->
+    <polygon points="28,8 45,18 45,38 28,48 11,38 11,18"
+             fill="none"
+             stroke="#FFFFFF"
+             stroke-width="0.8"
+             stroke-opacity="0.3"
+             stroke-linejoin="round"/>
+
+    <!-- 3 agentes orbitando -->
+    <circle cx="28" cy="13" r="2.5" fill="#00D4C4"/>
+    <circle cx="42" cy="35" r="2.5" fill="#FF5A36"/>
+    <circle cx="14" cy="35" r="2.5" fill="#FFFFFF"/>
+
+    <!-- Pulso coral central (heartbeat do sistema) -->
+    <circle cx="28" cy="28" r="3.5" fill="#FF5A36"/>
+    <circle cx="28" cy="28" r="6" fill="none" stroke="#FF5A36" stroke-width="1" stroke-opacity="0.5"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="80" y="52"
+        font-family="'Space Grotesk', sans-serif"
+        font-size="38"
+        font-weight="700"
+        fill="#0A0E1A"
+        letter-spacing="-1.5">mando</text>
+</svg>

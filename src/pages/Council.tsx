@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Users, Info, CheckCircle2, XCircle, AlertTriangle, Minus, HelpCircle } from 'lucide-react';
 import { CouncilPanel } from '../components/governance/CouncilPanel';
 

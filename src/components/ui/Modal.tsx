@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { Button } from './Button';
 

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { useEvaluationStore } from '../../stores/useEvaluationStore';
 import { SOURCE_INFO, calculateOverallScore } from '../../types/agentEvaluation';
 

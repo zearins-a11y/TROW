@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { auth, User } from '../lib/auth'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 interface AuthContextType {
   user: User | null
@@ -24,10 +25,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const currentUser = await auth.getUser()
+        // CRITICAL: Handle OAuth callback before anything else
+        // Supabase needs to detect tokens in URL and persist them
+        if (isSupabaseConfigured && supabase) {
+          const hash = window.location.hash
+          const search = window.location.search
+          const hasOAuthToken =
+            hash.includes('access_token') ||
+            hash.includes('error_description') ||
+            hash.includes('id_token') ||
+            hash.includes('refresh_token') ||
+            search.includes('code=') ||
+            search.includes('error=')
+
+          if (hasOAuthToken) {
+            // Wait for Supabase to process the callback (it sets persistSession internally)
+            const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+            console.log('[Auth] OAuth callback detected, session:', sessionData?.session?.user?.email, 'error:', sessionError?.message)
+
+            // Clean the URL BEFORE any redirect happens
+            const cleanUrl = window.location.pathname + '#dashboard'
+            window.history.replaceState(null, '', cleanUrl)
+
+            if (sessionData?.session?.user) {
+              const user = sessionData.session.user
+              setUser({
+                id: user.id,
+                email: user.email || '',
+                name: user.user_metadata?.full_name || user.user_metadata?.name,
+                avatar_url: user.user_metadata?.avatar_url,
+                created_at: user.created_at,
+              })
+              setInitialized(true)
+              return
+            }
+          }
+        }
+
+        // Add timeout to prevent infinite loading
+        const timeoutPromise = new Promise<null>((resolve) => {
+          setTimeout(() => resolve(null), 5000)
+        })
+
+        const userPromise = auth.getUser()
+        const currentUser = await Promise.race([userPromise, timeoutPromise])
         setUser(currentUser)
       } catch (error) {
         console.error('Failed to get current user:', error)
+        setUser(null)
       } finally {
         setInitialized(true)
       }
@@ -35,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initAuth()
 
-    // Listen for auth changes
+    // Listen for auth changes - critical for OAuth callback
     const unsubscribe = auth.onAuthStateChange((user) => {
       setUser(user)
     })

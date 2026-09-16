@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 100" width="290" height="100">
+  <!--
+    Trovx v5 — geometria do referencial
+
+    Mudanças vs v4:
+    - "v" embaixo é MENOR (não vai até o topo, só até y=22)
+    - Haste SW preta do "x" é LONGA, vai até ascender (y=-12)
+    - Haste NE âmbar cruza em ângulo mais suave, terminando no meio
+    - "tro" texto mais leve visualmente (mais fino que o "v+x")
+  -->
+  <text x="20" y="68" font-family="'Space Grotesk', sans-serif" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#0F0F12">tro</text>
+
+  <!-- "v" (apenas parte inferior): haste esquerda preto -->
+  <line x1="175" y1="22" x2="200" y2="68" stroke="#0F0F12" stroke-width="7" stroke-linecap="square"/>
+
+  <!-- Gesto contínuo: haste direita do "v" → prolongamento SW do "x" -->
+  <path d="M 225 22 L 200 68 L 225 22 L 252 -12"
+        stroke="#0F0F12" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+
+  <!-- Haste NE âmbar do "x" — cruza a SW preta em ângulo, termina no meio -->
+  <line x1="218" y1="-12" x2="244" y2="36" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+</svg>

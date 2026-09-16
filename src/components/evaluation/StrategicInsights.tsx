@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { TrendingUp, Target, AlertTriangle, CheckCircle2, Zap } from 'lucide-react';
 import { useEvaluationStore } from '../../stores/useEvaluationStore';
 import { calculateOverallScore } from '../../types/agentEvaluation';

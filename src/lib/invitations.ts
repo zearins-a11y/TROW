@@ -4,6 +4,7 @@
 
 import { supabase, isSupabaseConfigured } from './supabase'
 import { auth } from './auth'
+import { logAudit } from './audit'
 
 export interface Invitation {
   id: string
@@ -111,6 +112,27 @@ export async function acceptInvitation(token: string): Promise<InvitationResult>
     return { success: false, error: error.message }
   }
 
+  // Audit log: register that a team_member was created via invitation
+  const { data: acceptedInv } = await supabase
+    .from('invitations')
+    .select('id, team_id, email, role_id')
+    .eq('token', token)
+    .maybeSingle()
+
+  if (acceptedInv) {
+    await logAudit({
+      action: 'create',
+      module: 'team',
+      resourceType: 'team_member',
+      resourceId: acceptedInv.team_id,
+      newValue: {
+        email: acceptedInv.email,
+        role_id: acceptedInv.role_id,
+        via_invitation: acceptedInv.id,
+      },
+    })
+  }
+
   return { success: true }
 }
 
@@ -130,6 +152,13 @@ export async function cancelInvitation(invitationId: string): Promise<Invitation
   if (error) {
     return { success: false, error: error.message }
   }
+
+  await logAudit({
+    action: 'delete',
+    module: 'team',
+    resourceType: 'invitation',
+    resourceId: invitationId,
+  })
 
   return { success: true }
 }
@@ -171,7 +200,7 @@ export async function getPendingInvitations(): Promise<Invitation[]> {
  * Get invite link for sharing
  */
 export function getInviteLink(token: string): string {
-  return `${window.location.origin}/accept-invite?token=${token}`
+  return `${window.location.origin}/#accept-invite?token=${token}`
 }
 
 /**

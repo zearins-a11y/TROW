@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { CheckCircle, XCircle, Loader2, Users, ArrowRight } from 'lucide-react'
 import { getInvitationByToken, acceptInvitation } from '../lib/invitations'
 import { Button } from '../components/ui'
 
+function getTokenFromUrl(): string | null {
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  return params.get('token')
+}
+
+function navigate(hash: string) {
+  if (typeof window !== 'undefined') {
+    window.location.hash = hash
+  }
+}
+
 export default function AcceptInvite() {
-  const [searchParams] = useSearchParams()
-  const token = searchParams.get('token')
+  const token = getTokenFromUrl()
 
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'expired'>('loading')
@@ -105,11 +115,22 @@ export default function AcceptInvite() {
           <p className="text-gray-500 dark:text-gray-400 mb-6">
             Você foi adicionado à equipe com sucesso.
           </p>
-          <Link to="/dashboard">
-            <Button icon={<ArrowRight size={18} />}>
+          <div className="space-y-3">
+            <Button
+              onClick={() => navigate('dashboard')}
+              icon={<ArrowRight size={18} />}
+              className="w-full"
+            >
               Ir para Dashboard
             </Button>
-          </Link>
+            <Button
+              variant="secondary"
+              onClick={() => navigate('login')}
+              className="w-full"
+            >
+              Fazer login
+            </Button>
+          </div>
         </motion.div>
       </div>
     )
@@ -154,12 +175,13 @@ export default function AcceptInvite() {
             {loading ? 'Aceitando...' : 'Aceitar Convite'}
           </Button>
 
-          <Link
-            to="/login"
-            className="block text-center mt-4 text-sm text-gray-500 hover:text-gray-700"
+          <button
+            type="button"
+            onClick={() => navigate('login')}
+            className="block w-full text-center mt-4 text-sm text-gray-500 hover:text-gray-700"
           >
             Fazer login para aceitar
-          </Link>
+          </button>
         </motion.div>
       </div>
     )
@@ -181,9 +203,7 @@ export default function AcceptInvite() {
         <p className="text-gray-500 dark:text-gray-400 mb-6">
           {error || 'Este link de convite não é válido ou já foi utilizado.'}
         </p>
-        <Link to="/signup">
-          <Button variant="secondary">Criar uma conta</Button>
-        </Link>
+        <Button variant="secondary" onClick={() => navigate('signup')}>Criar uma conta</Button>
       </motion.div>
     </div>
   )

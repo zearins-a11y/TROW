@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 100" width="290" height="100">
+  <text x="20" y="68" font-family="'Space Grotesk', sans-serif" font-size="56" font-weight="700" letter-spacing="-3.8" fill="#FFFFFF">tro</text>
+  <line x1="175" y1="22" x2="200" y2="68" stroke="#FFFFFF" stroke-width="7" stroke-linecap="square"/>
+  <path d="M 225 22 L 200 68 L 225 22 L 252 -12" stroke="#FFFFFF" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+  <line x1="218" y1="-12" x2="244" y2="36" stroke="#F5A524" stroke-width="7" stroke-linecap="square"/>
+</svg>

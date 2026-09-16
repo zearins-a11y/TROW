@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Globe, Info, Calendar, Clock, Sun, Users } from 'lucide-react';
 import { RegionalAdaptationPanel } from '../components/governance/RegionalAdaptationPanel';
 

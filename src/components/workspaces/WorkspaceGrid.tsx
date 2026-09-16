@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Plus } from 'lucide-react';
 import { Workspace } from '../../types/workspaces';
 import { WorkspaceCard } from './WorkspaceCard';

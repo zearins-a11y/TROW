@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Plus } from 'lucide-react';
 import { Button, Modal } from '../ui';
 import { WorkspaceType, WORKSPACE_TYPE_COLORS } from '../../types/workspaces';

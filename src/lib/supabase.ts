@@ -15,6 +15,30 @@ export const supabase = isSupabaseConfigured
       auth: {
         persistSession: true,
         autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storageKey: 'sb-djkfukvjdbmbwdvtdfyk-auth-token',
+        storage: {
+          getItem: (key) => {
+            if (typeof window === 'undefined') return null
+            try {
+              return window.localStorage.getItem(key)
+            } catch {
+              return null
+            }
+          },
+          setItem: (key, value) => {
+            if (typeof window === 'undefined') return
+            try {
+              window.localStorage.setItem(key, value)
+            } catch {}
+          },
+          removeItem: (key) => {
+            if (typeof window === 'undefined') return
+            try {
+              window.localStorage.removeItem(key)
+            } catch {}
+          },
+        },
       },
       realtime: {
         params: {

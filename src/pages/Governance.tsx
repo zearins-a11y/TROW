@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Shield, Bell, Clock, AlertTriangle } from 'lucide-react';
 import { useGovernanceStore } from '../stores/useGovernanceStore';
 import { ConnectionStatus } from '../components/SupabaseStatus';

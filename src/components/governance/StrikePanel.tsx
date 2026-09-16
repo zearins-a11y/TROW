@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { AlertTriangle, Shield, Clock, User, CheckCircle2 } from 'lucide-react';
 import { useStrikeStore } from '../../stores/useStrikeStore';
 import { getStrikeLevelInfo } from '../../utils/strikeSystem';

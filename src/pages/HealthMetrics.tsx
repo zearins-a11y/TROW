@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Activity, Info, BarChart3, TrendingUp, CheckCircle2, AlertTriangle, Clock, Shield, Zap, Users, Target } from 'lucide-react';
 import { HealthMetricsPanel } from '../components/governance/HealthMetricsPanel';
 

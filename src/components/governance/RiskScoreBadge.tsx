@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Shield, AlertTriangle, TrendingUp, Clock } from 'lucide-react';
 import { RiskScore } from '../../types/governance';
 import { getRiskColor, getRiskRecommendation } from '../../utils/crossCheckRanker';
